@@ -65,7 +65,7 @@ const Sidebar = () => {
                   fontWeight={"medium"}
                   fontSize={"16px"}
                   color={
-                    activeLabel === item.label ? "brand.800" : "app.neutralGray"
+                    activeLabel === item.label ? "brand.800" : "app.neutralGrey"
                   }
                 >
                   {item.label}
@@ -114,7 +114,7 @@ const Sidebar = () => {
                       color={
                         activeLabel === child.label
                           ? "brand.secondary"
-                          : "app.neutralGray"
+                          : "app.neutralGrey"
                       }
                     >
                       {child.label}

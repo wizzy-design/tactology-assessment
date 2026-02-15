@@ -1,9 +1,17 @@
+import { Box } from "@chakra-ui/react";
+import TopNav from "@/components/layout/top-nav";
 import Sidebar from "@/components/layout/sidebar";
 
 export default function Home() {
   return (
-    <main>
+    <Box minH="100vh" bg="white">
       <Sidebar />
-    </main>
+
+      <Box ml="260px">
+        <TopNav />
+
+        <Box p="6" as="section"></Box>
+      </Box>
+    </Box>
   );
 }
