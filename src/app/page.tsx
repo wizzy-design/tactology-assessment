@@ -11,8 +11,6 @@ export default function Home() {
       <Box ml="260px">
         <TopNav />
         <PlannerControls />
-
-        <Box p="6" as="section"></Box>
       </Box>
     </Box>
   );

@@ -19,6 +19,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <style>{`
+          ::-webkit-scrollbar {
+            width: 4px;
+          }
+          ::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          ::-webkit-scrollbar-thumb {
+            background: #E2E8F0;
+            border-radius: 10px;
+          }
+        `}</style>
+      </head>
       <body className={`${manRope.variable}`}>
         <Provider>{children}</Provider>
       </body>
