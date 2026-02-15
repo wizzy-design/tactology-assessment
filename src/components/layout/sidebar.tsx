@@ -12,7 +12,7 @@ import {
   Document,
   Stickynote,
 } from "iconsax-reactjs";
-import { PiCaretDownLight } from "react-icons/pi";
+import { PiCaretDownBold } from "react-icons/pi";
 
 const Sidebar = () => {
   const activeLabel = "Planner";
@@ -73,7 +73,7 @@ const Sidebar = () => {
               </HStack>
 
               {item.children && (
-                <Icon as={PiCaretDownLight} color="#292D32" boxSize="5" />
+                <Icon as={PiCaretDownBold} color="#292D32" boxSize="5" />
               )}
             </Flex>
 

@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import TopNav from "@/components/layout/top-nav";
 import Sidebar from "@/components/layout/sidebar";
+import { PlannerControls } from "@/components/rooster/planner-controls";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
 
       <Box ml="260px">
         <TopNav />
+        <PlannerControls />
 
         <Box p="6" as="section"></Box>
       </Box>

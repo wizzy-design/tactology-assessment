@@ -1,18 +1,9 @@
 "use client";
 
-import {
-  Box,
-  Button,
-  Flex,
-  Icon,
-  IconButton,
-  List,
-  Text,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Text, VStack } from "@chakra-ui/react";
 import { Category, Setting2 } from "iconsax-reactjs";
 import { LuBell } from "react-icons/lu";
-import { PiCaretDownLight } from "react-icons/pi";
+import { PiCaretDownBold } from "react-icons/pi";
 
 const TopNav = () => {
   return (
@@ -89,7 +80,7 @@ const TopNav = () => {
           </Text>
         </VStack>
 
-        <Icon as={PiCaretDownLight} color="#747C74" boxSize={4} />
+        <Icon as={PiCaretDownBold} color="#747C74" boxSize={4} />
       </Flex>
     </Box>
   );
