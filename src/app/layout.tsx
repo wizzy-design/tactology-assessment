@@ -33,7 +33,7 @@ export default function RootLayout({
           }
         `}</style>
       </head>
-      <body className={`${manRope.variable}`}>
+      <body className={`${manRope.variable} ${manRope.className}`}>
         <Provider>{children}</Provider>
       </body>
     </html>
