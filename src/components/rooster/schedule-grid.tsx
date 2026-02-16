@@ -1,7 +1,9 @@
 import { Box, Grid, Text, HStack } from "@chakra-ui/react";
 import { DEPARTMENTS, TIME_SLOTS } from "@/lib/constants";
+import ScheduleCard from "./schedule-card";
+import { MOCK_SCHEDULES } from "@/lib/mock-data";
 
-export const ScheduleGrid = () => {
+const ScheduleGrid = () => {
   return (
     <Box
       bg="white"
@@ -75,17 +77,21 @@ export const ScheduleGrid = () => {
                 {time}
               </Text>
             </Box>
-
-            {/* Department Columns */}
-            {DEPARTMENTS.map((dept) => (
+            {DEPARTMENTS.map((dept, idx) => (
               <Box
                 key={`${dept}-${time}`}
                 borderRight="1px solid"
-                borderColor="gray.50"
-                h="60px"
-                _hover={{ bg: "blue.50" }}
-                transition="bg 0.2s"
-              />
+                borderColor="gray.100"
+                h={`60px`}
+                p="1"
+              >
+                {time === "08:00" && idx === 0 && (
+                  <ScheduleCard
+                    schedule={MOCK_SCHEDULES[0]}
+                    variant="relative"
+                  />
+                )}
+              </Box>
             ))}
           </Grid>
         ))}
@@ -93,3 +99,5 @@ export const ScheduleGrid = () => {
     </Box>
   );
 };
+
+export default ScheduleGrid;
