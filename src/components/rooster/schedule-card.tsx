@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, HStack, Text, Avatar } from "@chakra-ui/react";
+import { Box, Text, Avatar } from "@chakra-ui/react";
 import { Schedule } from "@/lib/types";
 
 interface ScheduleCardProps {
@@ -8,6 +8,7 @@ interface ScheduleCardProps {
   top?: number;
   height?: number;
   variant?: "absolute" | "relative";
+  isStacked?: boolean;
 }
 
 const ScheduleCard = ({
@@ -15,6 +16,7 @@ const ScheduleCard = ({
   top,
   height,
   variant = "absolute",
+  isStacked = false,
 }: ScheduleCardProps) => {
   const getColors = (color: string) => {
     switch (color) {
@@ -39,18 +41,25 @@ const ScheduleCard = ({
       top={isAbsolute ? `${top}px` : undefined}
       left={isAbsolute ? "4px" : undefined}
       right={isAbsolute ? "4px" : undefined}
-      height={isAbsolute ? `${height}px` : "auto"}
+      height={isAbsolute ? `${height}px` : "full"}
       bg={colors.bg}
       border="1px solid"
       borderColor={colors.border}
       borderRadius="8px"
       p="2"
       cursor="pointer"
+      minW={"101px"}
+      pointerEvents="auto"
       transition="all 0.2s"
       _hover={{ transform: "scale(1.02)", zIndex: 1, shadow: "sm" }}
     >
-      <HStack align="start" gap={2}>
-        <Avatar.Root bg="white" width="28px" height="28px">
+      <Box
+        display="flex"
+        flexDirection={isStacked ? "column" : "row"}
+        alignItems="start"
+        gap={2}
+      >
+        <Avatar.Root bg="white" width="28px" height="28px" flexShrink={0}>
           <Avatar.Fallback
             fontSize="12px"
             color="app.neutralSubtle"
@@ -80,7 +89,7 @@ const ScheduleCard = ({
             {schedule.userName}
           </Text>
         </Box>
-      </HStack>
+      </Box>
     </Box>
   );
 };

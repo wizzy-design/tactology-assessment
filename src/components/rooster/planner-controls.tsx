@@ -20,7 +20,7 @@ import {
   MenuRoot,
   MenuTrigger,
 } from "../ui/menu";
-import { ScheduleGrid } from "./schedule-grid";
+import ScheduleGrid from "./schedule-grid";
 
 const PlannerControls = () => {
   const [isLive, setIsLive] = useState<boolean>(true);
