@@ -26,7 +26,7 @@ const DroppableGridCell = ({
     <Box
       ref={setNodeRef}
       borderRight="1px solid"
-      borderColor="brand.main"
+      borderColor="app.neutralOutline"
       w="full"
       h="full"
       pointerEvents="auto"

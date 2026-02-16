@@ -2,7 +2,6 @@ import { Box } from "@chakra-ui/react";
 import TopNav from "@/components/layout/top-nav";
 import Sidebar from "@/components/layout/sidebar";
 import PlannerControls from "@/components/rooster/planner-controls";
-import RoosterSidebar from "@/components/rooster/rooster-sidebar";
 import { HStack } from "@chakra-ui/react";
 
 export default function Home() {
