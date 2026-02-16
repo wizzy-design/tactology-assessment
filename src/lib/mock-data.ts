@@ -9,7 +9,7 @@ export const MOCK_USERS: User[] = [
     weeklyHours: "38.0hrs",
     status: "On Leave",
     leaveRange: "Jan 8 - Jan 15",
-    indicators: ["m", "cl", "w", "do", "vr"],
+    indicators: ["m", "di", "w", "do", "vr"],
   },
   {
     id: "2",
@@ -19,7 +19,7 @@ export const MOCK_USERS: User[] = [
     weeklyHours: "38.0hrs",
     status: "On Leave",
     leaveRange: "Jan 12 - Jan 28",
-    indicators: ["m", "cl", "w", "do", "vr"],
+    indicators: ["m", "di", "w", "do", "vr"],
   },
   {
     id: "3",
@@ -29,7 +29,7 @@ export const MOCK_USERS: User[] = [
     weeklyHours: "38.0hrs",
     status: "On Leave",
     leaveRange: "Jan 2 - Jan 9",
-    indicators: ["m", "cl", "w", "do", "vr"],
+    indicators: ["m", "di", "w", "do", "vr"],
   },
 ];
 

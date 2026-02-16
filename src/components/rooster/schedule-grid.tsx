@@ -1,9 +1,10 @@
-import { Box, Grid, Text } from "@chakra-ui/react";
+import { Box, Grid, HStack, Text } from "@chakra-ui/react";
 import { DEPARTMENTS, TIME_SLOTS } from "@/lib/constants";
 import ScheduleCard from "./schedule-card";
 import { MOCK_SCHEDULES } from "@/lib/mock-data";
 import { Schedule } from "@/lib/types";
 import ScheduleDetailsPopover from "./schedule-details-popover";
+import RoosterSidebar from "./rooster-sidebar";
 
 const ROW_HEIGHT = 120; // Represents 30 minutes
 const START_HOUR = 8; // Roster starts at 08:00
@@ -135,131 +136,137 @@ const ScheduleGrid = () => {
   };
 
   return (
-    <Box
-      bg="white"
-      borderRadius="xl"
-      border="1px solid"
-      borderColor="app.neutralOutline"
-      mx={"30px"}
-      overflowX="auto"
-      overflowY="hidden"
-    >
-      {/* Header Row */}
-      <Grid
-        templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
-        borderBottom="1px solid"
-        borderTop="none"
-        borderColor="brand.main"
-        w="fit-content"
-        minW="full"
+    <HStack align="stretch" gap="14px" flex="1" overflow="hidden" mx={"30px"}>
+      <RoosterSidebar />
+      <Box
+        bg="white"
+        borderRadius="xl"
+        border="1px solid"
+        borderColor="app.neutralOutline"
+        overflowX="auto"
+        overflowY="hidden"
       >
-        <Box
-          p="3"
-          borderRight="1px solid"
-          borderColor="app.neutralOutline"
-          bg={"brand.secondaryLight"}
-          textAlign={"center"}
-          w="120px"
+        {/* Header Row */}
+        <Grid
+          templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
+          borderBottom="1px solid"
+          borderTop="none"
+          borderColor="brand.main"
+          w="fit-content"
+          minW="full"
         >
-          <Text fontSize="sm" fontWeight="medium" color="brand.secondary">
-            Days
-          </Text>
-        </Box>
-
-        {DEPARTMENTS.map((dept) => (
           <Box
-            key={dept}
             p="3"
-            textAlign="center"
             borderRight="1px solid"
             borderColor="app.neutralOutline"
-            bg={"#F3F5F7"}
+            bg={"brand.secondaryLight"}
+            textAlign={"center"}
+            w="120px"
           >
-            <Text fontSize="sm" fontWeight="medium" color="app.grey">
-              {dept}
+            <Text fontSize="sm" fontWeight="medium" color="brand.secondary">
+              Days
             </Text>
           </Box>
-        ))}
-      </Grid>
 
-      {/* Grid Body */}
-      <Box
-        h="700px"
-        overflowY="auto"
-        position="relative"
-        w="fit-content"
-        minW="full"
-        css={{
-          "&::-webkit-scrollbar": { width: "4px" },
-          "&::-webkit-scrollbar-track": { bg: "transparent" },
-          "&::-webkit-scrollbar-thumb": {
-            bg: "#D5DCE9",
-            borderRadius: "full",
-          },
-        }}
-      >
-        {/* Background Grid Lines */}
-        {TIME_SLOTS.map((time) => (
-          <Grid
-            key={time}
-            templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
-            height={`${ROW_HEIGHT}px`}
-            borderBottom="1px solid"
-            borderColor="brand.main"
-          >
-            {/* Time Column */}
+          {DEPARTMENTS.map((dept) => (
             <Box
-              px="4"
-              py="2"
+              key={dept}
+              p="3"
+              textAlign="center"
               borderRight="1px solid"
-              borderColor="brand.main"
-              display="flex"
-              justifyContent="start"
-              w="120px"
+              borderColor="app.neutralOutline"
+              bg={"#F3F5F7"}
             >
-              <Text fontSize="sm" fontWeight={"medium"} color="app.neutralGrey">
-                {time}
+              <Text fontSize="sm" fontWeight="medium" color="app.grey">
+                {dept}
               </Text>
             </Box>
-            {DEPARTMENTS.map((dept) => (
+          ))}
+        </Grid>
+
+        {/* Grid Body */}
+        <Box
+          h="700px"
+          overflowY="auto"
+          position="relative"
+          w="fit-content"
+          minW="full"
+          css={{
+            "&::-webkit-scrollbar": { width: "4px" },
+            "&::-webkit-scrollbar-track": { bg: "transparent" },
+            "&::-webkit-scrollbar-thumb": {
+              bg: "#D5DCE9",
+              borderRadius: "full",
+            },
+          }}
+        >
+          {/* Background Grid Lines */}
+          {TIME_SLOTS.map((time) => (
+            <Grid
+              key={time}
+              templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
+              height={`${ROW_HEIGHT}px`}
+              borderBottom="1px solid"
+              borderColor="brand.main"
+            >
+              {/* Time Column */}
               <Box
-                key={`${dept}-${time}`}
+                px="4"
+                py="2"
                 borderRight="1px solid"
                 borderColor="brand.main"
-                h="full"
-              />
-            ))}
-          </Grid>
-        ))}
-
-        {/* Schedules Overlay */}
-        <Box
-          position="absolute"
-          top={0}
-          left="120px"
-          right={0}
-          bottom={0}
-          pointerEvents="none"
-        >
-          <Grid
-            templateColumns={`repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
-            h="full"
-          >
-            {DEPARTMENTS.map((dept) => (
-              <Box
-                key={dept}
-                position="relative"
-                h="full"
-                borderRight="1px solid"
-                borderColor="transparent"
+                display="flex"
+                justifyContent="start"
+                w="120px"
               >
-                {renderSchedules(dept)}
+                <Text
+                  fontSize="sm"
+                  fontWeight={"medium"}
+                  color="app.neutralGrey"
+                >
+                  {time}
+                </Text>
               </Box>
-            ))}
-          </Grid>
+              {DEPARTMENTS.map((dept) => (
+                <Box
+                  key={`${dept}-${time}`}
+                  borderRight="1px solid"
+                  borderColor="brand.main"
+                  h="full"
+                />
+              ))}
+            </Grid>
+          ))}
+
+          {/* Schedules Overlay */}
+          <Box
+            position="absolute"
+            top={0}
+            left="120px"
+            right={0}
+            bottom={0}
+            pointerEvents="none"
+          >
+            <Grid
+              templateColumns={`repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
+              h="full"
+            >
+              {DEPARTMENTS.map((dept) => (
+                <Box
+                  key={dept}
+                  position="relative"
+                  h="full"
+                  borderRight="1px solid"
+                  borderColor="transparent"
+                >
+                  {renderSchedules(dept)}
+                </Box>
+              ))}
+            </Grid>
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </HStack>
   );
 };
 
