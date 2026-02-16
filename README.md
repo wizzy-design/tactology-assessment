@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Developer Assignment – Roster System
 
-## Getting Started
+---
 
-First, run the development server:
+We want to evaluate your **React, Next.js, TypeScript, and Chakra UI skills** in a real-world scenario.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+You will be implementing a Roster **System** based on this [**Figma design**](https://www.figma.com/design/Ao4TVJNXKKrmY1lU0ZqnEd/TGLOBAL-FRONTEND-ROSTER-ASSIGNMENT?node-id=0-1&t=sjpWCuBMZOAst08h-1) . This is **not for production use** – we have already built this internally. The goal is to test your ability to take a design and turn it into a working app.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🔧 Tech Stack Rules
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You **must use only** the following:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js** (latest stable version)
+- **TypeScript**
+- **Chakra UI** and/or **Ark UI**
+- **iconsax-reactjs** for icons
+- **react-icons** for any additional icons
 
-## Learn More
+❌ **AI-generated code is strictly not allowed**.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎯 Requirements
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Follow the Figma design closely.**
+    - Implement the layout exactly as provided.
+    - Proper use of Chakra/Ark UI components.
+2. **Todo List Functionality**
+    - Display a  calendar view with  data
+    - Ability to switch to the next data
+- Clicking on a schedule should show the details popup
+3. **UI/UX**
+    - Use icons (iconsax/react-icons) as shown in the design.
+    - Show empty states and loading states where appropriate.
+    - Keep the UI consistent with Chakra/Ark UI best practices.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⭐ Bonus (Optional, but highly valued)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Ability to drag and drop users on the calendar and they are scheduled
+- Month view for the planner
+- switching between live & plan view should load different date
+## 📂 Deliverables
+
+- A GitHub repository with your code.
+- You can also host your solution on vercel or similar platforms
+- Clear commit history (not a single commit dump).
+- `README.md` with setup instructions.
+
+---
+
+## ⏳ Timeline
+
+The task is designed to take about **2-3 days**.
+## ✅ What We’re Testing
+
+- **React/Next.js fundamentals** – state management, component structure, routing (if needed).
+- **TypeScript usage** – typing props, models, and functions properly.
+- **Chakra/Ark UI skills** – layout, responsiveness, and clean design implementation.
+- **Icons integration** – using iconsax-reactjs and react-icons correctly.
+- **Coding style & structure** – clean, modular, and maintainable code.
+- **Attention to detail** – following the Figma design, handling edge cases.
+- **Bonus problem-solving** – live table updates and persistence.

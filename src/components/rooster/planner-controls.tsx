@@ -1,13 +1,7 @@
 "use client";
 
-import { Box, HStack, Text, Button, Icon, Badge } from "@chakra-ui/react";
-import {
-  ArrowLeft2,
-  ArrowRight2,
-  Filter,
-  Setting4,
-  People,
-} from "iconsax-reactjs";
+import { Box, HStack, Text, Button, Icon } from "@chakra-ui/react";
+import { ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
 import { FiPlus } from "react-icons/fi";
 import { PiCaretDownBold, PiUsersThree } from "react-icons/pi";
 import PlannerControlsHeader from "./planner-controls-header";

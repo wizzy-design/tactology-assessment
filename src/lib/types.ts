@@ -19,5 +19,5 @@ export interface Schedule {
   endTime: string;
   department: string;
   date: string;
-  color: string;
+  color: "amber" | "green" | "orange";
 }

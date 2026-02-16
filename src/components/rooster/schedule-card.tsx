@@ -2,6 +2,7 @@
 
 import { Box, Text, Avatar } from "@chakra-ui/react";
 import { Schedule } from "@/lib/types";
+import { getScheduleColors } from "@/lib/utils";
 
 interface ScheduleCardProps {
   schedule: Schedule;
@@ -18,20 +19,7 @@ const ScheduleCard = ({
   variant = "absolute",
   isStacked = false,
 }: ScheduleCardProps) => {
-  const getColors = (color: string) => {
-    switch (color) {
-      case "orange":
-        return { bg: "#FDF5F0", border: "#E35F00" };
-      case "green":
-        return { bg: "#F1FBF4", border: "#19C34C" };
-      case "amber":
-        return { bg: "#F9F9F1", border: "#A19712" };
-      default:
-        return { bg: "white", border: color };
-    }
-  };
-
-  const colors = getColors(schedule.color);
+  const colors = getScheduleColors(schedule.color);
 
   const isAbsolute = variant === "absolute";
 
@@ -48,7 +36,6 @@ const ScheduleCard = ({
       borderRadius="8px"
       p="2"
       cursor="pointer"
-      minW={"101px"}
       pointerEvents="auto"
       transition="all 0.2s"
       _hover={{ transform: "scale(1.02)", zIndex: 1, shadow: "sm" }}

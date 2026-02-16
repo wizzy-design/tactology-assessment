@@ -1,13 +1,15 @@
-import { Box, Grid, Text, HStack } from "@chakra-ui/react";
+import { Box, Grid, Text } from "@chakra-ui/react";
 import { DEPARTMENTS, TIME_SLOTS } from "@/lib/constants";
 import ScheduleCard from "./schedule-card";
 import { MOCK_SCHEDULES } from "@/lib/mock-data";
 import { Schedule } from "@/lib/types";
+import ScheduleDetailsPopover from "./schedule-details-popover";
 
 const ROW_HEIGHT = 120; // Represents 30 minutes
 const START_HOUR = 8; // Roster starts at 08:00
 
 const ScheduleGrid = () => {
+  const date = "2025-09-08";
   // Calculate top offset from 08:00
   const getTimeOffset = (time: string) => {
     const [hours, minutes] = time.split(":").map(Number);
@@ -28,9 +30,7 @@ const ScheduleGrid = () => {
   };
 
   const DEPARTMENTS_SCHEDULES = (dept: string) =>
-    MOCK_SCHEDULES.filter(
-      (s) => s.department === dept && s.date === "2025-09-08",
-    );
+    MOCK_SCHEDULES.filter((s) => s.department === dept && s.date === date);
 
   const renderSchedules = (dept: string) => {
     const deptSchedules = DEPARTMENTS_SCHEDULES(dept);
@@ -50,14 +50,15 @@ const ScheduleGrid = () => {
     });
 
     const hasOverflow = lanes.length > 2;
-    const displayLanesCount = hasOverflow ? 3 : lanes.length;
+    // Column width configuration
+    const personWidth = hasOverflow ? 42 : 100 / Math.max(1, lanes.length);
+    const overflowWidth = 16;
     const elements = [];
 
     // Render columns 0 and 1
     lanes.slice(0, 2).forEach((lane, laneIndex) => {
       lane.forEach((schedule) => {
-        const widthPercent = 100 / displayLanesCount;
-        const leftPercent = laneIndex * widthPercent;
+        const leftPercent = laneIndex * personWidth;
 
         elements.push(
           <Box
@@ -65,27 +66,37 @@ const ScheduleGrid = () => {
             position="absolute"
             top={`${getTimeOffset(schedule.startTime) + 1}px`}
             left={`${leftPercent}%`}
-            width={`${widthPercent}%`}
+            width={`${personWidth}%`}
             height={`${getScheduleHeight(schedule.startTime, schedule.endTime) - 1}px`}
             px="1px"
-            pointerEvents="none"
+            pointerEvents="auto"
           >
-            <ScheduleCard
-              schedule={schedule}
-              variant="relative"
-              isStacked={displayLanesCount > 1}
-            />
+            <ScheduleDetailsPopover
+              date={date}
+              department={dept}
+              startTime={schedule.startTime}
+            >
+              <Box w="full" h="full">
+                <ScheduleCard
+                  schedule={schedule}
+                  variant="relative"
+                  isStacked={lanes.length > 1}
+                />
+              </Box>
+            </ScheduleDetailsPopover>
           </Box>,
         );
       });
     });
 
-    // Render "See all" for overflow (Lane 2)
+    // Render overflow button (Lane 2)
     if (hasOverflow) {
+      const overflowCount = lanes
+        .slice(2)
+        .reduce((acc, lane) => acc + lane.length, 0);
       const overflowStart = lanes[2][0].startTime;
       const overflowEnd = lanes[2][0].endTime;
-      const widthPercent = 100 / displayLanesCount;
-      const leftPercent = 2 * widthPercent;
+      const leftPercent = 2 * personWidth;
 
       elements.push(
         <Box
@@ -93,26 +104,29 @@ const ScheduleGrid = () => {
           position="absolute"
           top={`${getTimeOffset(overflowStart) + 1}px`}
           left={`${leftPercent}%`}
-          width={`${widthPercent}%`}
+          width={`${overflowWidth}%`}
           height={`${getScheduleHeight(overflowStart, overflowEnd) - 1}px`}
           px="1px"
+          pointerEvents="auto"
         >
-          <Box
-            bg="app.neutralLight"
-            h="full"
-            borderRadius="8px"
-            border="1px solid"
-            borderColor="app.neutralOutline"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            cursor="pointer"
-            _hover={{ bg: "gray.50" }}
-          >
-            <Text color="app.neutralGrey" fontSize="sm" fontWeight="semibold">
-              See all
-            </Text>
-          </Box>
+          <ScheduleDetailsPopover date={date} department={dept}>
+            <Box
+              bg="app.neutralLight"
+              h="full"
+              borderRadius="8px"
+              border="1px solid"
+              borderColor="app.neutralOutline"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              cursor="pointer"
+              _hover={{ bg: "gray.50" }}
+            >
+              <Text color="app.neutralGrey" fontSize="xs" fontWeight="bold">
+                +{overflowCount}
+              </Text>
+            </Box>
+          </ScheduleDetailsPopover>
         </Box>,
       );
     }
@@ -127,15 +141,17 @@ const ScheduleGrid = () => {
       border="1px solid"
       borderColor="app.neutralOutline"
       mx={"30px"}
-      overflow="hidden"
+      overflowX="auto"
+      overflowY="hidden"
     >
       {/* Header Row */}
       <Grid
-        templateColumns={`120px repeat(${DEPARTMENTS.length}, 1fr)`}
+        templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
         borderBottom="1px solid"
         borderTop="none"
         borderColor="brand.main"
-        overflow="hidden"
+        w="fit-content"
+        minW="full"
       >
         <Box
           p="3"
@@ -171,11 +187,13 @@ const ScheduleGrid = () => {
         h="700px"
         overflowY="auto"
         position="relative"
+        w="fit-content"
+        minW="full"
         css={{
           "&::-webkit-scrollbar": { width: "4px" },
           "&::-webkit-scrollbar-track": { bg: "transparent" },
           "&::-webkit-scrollbar-thumb": {
-            bg: "neutralLight",
+            bg: "#D5DCE9",
             borderRadius: "full",
           },
         }}
@@ -184,7 +202,7 @@ const ScheduleGrid = () => {
         {TIME_SLOTS.map((time) => (
           <Grid
             key={time}
-            templateColumns={`120px repeat(${DEPARTMENTS.length}, 1fr)`}
+            templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
             height={`${ROW_HEIGHT}px`}
             borderBottom="1px solid"
             borderColor="brand.main"
@@ -223,7 +241,10 @@ const ScheduleGrid = () => {
           bottom={0}
           pointerEvents="none"
         >
-          <Grid templateColumns={`repeat(${DEPARTMENTS.length}, 1fr)`} h="full">
+          <Grid
+            templateColumns={`repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
+            h="full"
+          >
             {DEPARTMENTS.map((dept) => (
               <Box
                 key={dept}
