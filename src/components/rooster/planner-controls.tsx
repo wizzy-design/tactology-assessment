@@ -266,7 +266,7 @@ const PlannerControls = () => {
       </HStack>
 
       {/* Calendar */}
-      <ScheduleGrid />
+      <ScheduleGrid isLive={isLive} />
     </Box>
   );
 };

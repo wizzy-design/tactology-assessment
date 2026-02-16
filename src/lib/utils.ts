@@ -10,3 +10,16 @@ export const getScheduleColors = (color: string) => {
       return { bg: "white", border: color };
   }
 };
+export const getIndicatorColor = (ind: string) => {
+  switch (ind) {
+    case "m":
+    case "di":
+    case "w":
+      return { bg: "#F1FBF4", color: "#37A55C" };
+    case "do":
+    case "vr":
+      return { bg: "#FDF5F0", color: "#E35F00" };
+    default:
+      return { bg: "#FFEFE7", color: "#F55300" };
+  }
+};

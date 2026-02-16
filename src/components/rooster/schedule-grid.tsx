@@ -2,15 +2,38 @@ import { Box, Grid, HStack, Text } from "@chakra-ui/react";
 import { DEPARTMENTS, TIME_SLOTS } from "@/lib/constants";
 import ScheduleCard from "./schedule-card";
 import { MOCK_SCHEDULES } from "@/lib/mock-data";
-import { Schedule } from "@/lib/types";
+import { Schedule, User } from "@/lib/types";
 import ScheduleDetailsPopover from "./schedule-details-popover";
 import RoosterSidebar from "./rooster-sidebar";
+import { useState } from "react";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+} from "@dnd-kit/core";
+import DroppableGridCell from "./droppable-grid-cell";
+import { UserCard } from "./draggable-user-card";
 
 const ROW_HEIGHT = 120; // Represents 30 minutes
 const START_HOUR = 8; // Roster starts at 08:00
 
-const ScheduleGrid = () => {
-  const date = "2025-09-08";
+const ScheduleGrid = ({ isLive }: { isLive: boolean }) => {
+  const [schedules, setSchedules] = useState<Schedule[]>(MOCK_SCHEDULES);
+  const [activeUser, setActiveUser] = useState<User | null>(null);
+  const date = isLive ? "2025-09-08" : "2025-09-09";
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    }),
+  );
   // Calculate top offset from 08:00
   const getTimeOffset = (time: string) => {
     const [hours, minutes] = time.split(":").map(Number);
@@ -31,10 +54,61 @@ const ScheduleGrid = () => {
   };
 
   const DEPARTMENTS_SCHEDULES = (dept: string) =>
-    MOCK_SCHEDULES.filter((s) => s.department === dept && s.date === date);
+    schedules
+      .filter((s) => s.department === dept) // TEMPORARILY REMOVE DATE FILTER FOR DEBUGGING
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    console.log("Drag Start:", active.id);
+    if (active.data.current) {
+      setActiveUser(active.data.current.user);
+    }
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { over, active } = event;
+    console.log("Drag End - Active:", active.id, "Over:", over?.id);
+    setActiveUser(null);
+
+    if (over && active.data.current && over.data.current) {
+      console.log("Valid Drop Target Found:", over.data.current);
+      const user = active.data.current.user;
+      const { dept, time } = over.data.current as {
+        dept: string;
+        time: string;
+      };
+
+      // Calculate end time (default 1 hour later)
+      const [h, m] = time.split(":").map(Number);
+      const endH = h + 1;
+      const endHStr = endH.toString().padStart(2, "0");
+      const endTime = `${endHStr}:${m.toString().padStart(2, "0")}`;
+
+      const newSchedule: Schedule = {
+        id: `s-${Date.now()}`,
+        userId: user.id,
+        userName: user.name,
+        userInitials: user.initials,
+        title: `Shift for ${user.name}`,
+        startTime: time,
+        endTime: endTime,
+        department: dept,
+        date: date,
+        color: "green", // Use green for better visibility
+      };
+
+      setSchedules((prev) => {
+        const updated = [...prev, newSchedule];
+        console.log("Schedules Updated. New total count:", updated.length);
+        return updated;
+      });
+    }
+  };
 
   const renderSchedules = (dept: string) => {
     const deptSchedules = DEPARTMENTS_SCHEDULES(dept);
+    console.log(`Rendering ${deptSchedules.length} schedules for ${dept}`);
     const lanes: Schedule[][] = [];
 
     deptSchedules.forEach((s) => {
@@ -71,20 +145,13 @@ const ScheduleGrid = () => {
             height={`${getScheduleHeight(schedule.startTime, schedule.endTime) - 1}px`}
             px="1px"
             pointerEvents="auto"
+            zIndex={2}
           >
-            <ScheduleDetailsPopover
-              date={date}
-              department={dept}
-              startTime={schedule.startTime}
-            >
-              <Box w="full" h="full">
-                <ScheduleCard
-                  schedule={schedule}
-                  variant="relative"
-                  isStacked={lanes.length > 1}
-                />
-              </Box>
-            </ScheduleDetailsPopover>
+            <ScheduleCard
+              schedule={schedule}
+              variant="relative"
+              isStacked={lanes.length > 1}
+            />
           </Box>,
         );
       });
@@ -136,137 +203,151 @@ const ScheduleGrid = () => {
   };
 
   return (
-    <HStack align="stretch" gap="14px" flex="1" overflow="hidden" mx={"30px"}>
-      <RoosterSidebar />
-      <Box
-        bg="white"
-        borderRadius="xl"
-        border="1px solid"
-        borderColor="app.neutralOutline"
-        overflowX="auto"
-        overflowY="hidden"
-      >
-        {/* Header Row */}
-        <Grid
-          templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
-          borderBottom="1px solid"
-          borderTop="none"
-          borderColor="brand.main"
-          w="fit-content"
-          minW="full"
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <HStack align="stretch" gap="14px" flex="1" overflow="hidden" mx={"30px"}>
+        <RoosterSidebar />
+        <Box
+          bg="white"
+          borderRadius="xl"
+          border="1px solid"
+          borderColor="app.neutralOutline"
+          overflowX="auto"
+          overflowY="hidden"
         >
-          <Box
-            p="3"
-            borderRight="1px solid"
-            borderColor="app.neutralOutline"
-            bg={"brand.secondaryLight"}
-            textAlign={"center"}
-            w="120px"
+          {/* Header Row */}
+          <Grid
+            templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
+            borderBottom="1px solid"
+            borderTop="none"
+            borderColor="brand.main"
+            w="fit-content"
+            minW="full"
           >
-            <Text fontSize="sm" fontWeight="medium" color="brand.secondary">
-              Days
-            </Text>
-          </Box>
-
-          {DEPARTMENTS.map((dept) => (
             <Box
-              key={dept}
               p="3"
-              textAlign="center"
               borderRight="1px solid"
               borderColor="app.neutralOutline"
-              bg={"#F3F5F7"}
+              bg={"brand.secondaryLight"}
+              textAlign={"center"}
+              w="120px"
             >
-              <Text fontSize="sm" fontWeight="medium" color="app.grey">
-                {dept}
+              <Text fontSize="sm" fontWeight="medium" color="brand.secondary">
+                Days
               </Text>
             </Box>
-          ))}
-        </Grid>
 
-        {/* Grid Body */}
-        <Box
-          h="700px"
-          overflowY="auto"
-          position="relative"
-          w="fit-content"
-          minW="full"
-          css={{
-            "&::-webkit-scrollbar": { width: "4px" },
-            "&::-webkit-scrollbar-track": { bg: "transparent" },
-            "&::-webkit-scrollbar-thumb": {
-              bg: "#D5DCE9",
-              borderRadius: "full",
-            },
-          }}
-        >
-          {/* Background Grid Lines */}
-          {TIME_SLOTS.map((time) => (
-            <Grid
-              key={time}
-              templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
-              height={`${ROW_HEIGHT}px`}
-              borderBottom="1px solid"
-              borderColor="brand.main"
-            >
-              {/* Time Column */}
+            {DEPARTMENTS.map((dept) => (
               <Box
-                px="4"
-                py="2"
+                key={dept}
+                p="3"
+                textAlign="center"
                 borderRight="1px solid"
-                borderColor="brand.main"
-                display="flex"
-                justifyContent="start"
-                w="120px"
+                borderColor="app.neutralOutline"
+                bg={"#F3F5F7"}
               >
-                <Text
-                  fontSize="sm"
-                  fontWeight={"medium"}
-                  color="app.neutralGrey"
-                >
-                  {time}
+                <Text fontSize="sm" fontWeight="medium" color="app.grey">
+                  {dept}
                 </Text>
               </Box>
-              {DEPARTMENTS.map((dept) => (
+            ))}
+          </Grid>
+
+          {/* Grid Body */}
+          <Box
+            h="700px"
+            overflowY="auto"
+            position="relative"
+            w="fit-content"
+            minW="full"
+            css={{
+              "&::-webkit-scrollbar": { width: "4px" },
+              "&::-webkit-scrollbar-track": { bg: "transparent" },
+              "&::-webkit-scrollbar-thumb": {
+                bg: "#D5DCE9",
+                borderRadius: "full",
+              },
+            }}
+          >
+            {/* Background Grid Lines */}
+            {TIME_SLOTS.map((time) => (
+              <Grid
+                key={time}
+                templateColumns={`120px repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
+                height={`${ROW_HEIGHT}px`}
+                borderBottom="1px solid"
+                borderColor="brand.main"
+              >
+                {/* Time Column */}
                 <Box
-                  key={`${dept}-${time}`}
+                  px="4"
+                  py="2"
                   borderRight="1px solid"
                   borderColor="brand.main"
-                  h="full"
-                />
-              ))}
-            </Grid>
-          ))}
-
-          {/* Schedules Overlay */}
-          <Box
-            position="absolute"
-            top={0}
-            left="120px"
-            right={0}
-            bottom={0}
-            pointerEvents="none"
-          >
-            <Grid
-              templateColumns={`repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
-              h="full"
-            >
-              {DEPARTMENTS.map((dept) => (
-                <Box
-                  key={dept}
-                  position="relative"
-                  h="full"
-                  borderRight="1px solid"
-                  borderColor="transparent"
+                  display="flex"
+                  justifyContent="start"
+                  w="120px"
                 >
-                  {renderSchedules(dept)}
+                  <Text
+                    fontSize="sm"
+                    fontWeight={"medium"}
+                    color="app.neutralGrey"
+                  >
+                    {time}
+                  </Text>
                 </Box>
-              ))}
-            </Grid>
+                {DEPARTMENTS.map((dept) => (
+                  <DroppableGridCell
+                    key={`${dept}-${time}`}
+                    dept={dept}
+                    time={time}
+                  />
+                ))}
+              </Grid>
+            ))}
+
+            {/* Schedules Overlay */}
+            <Box
+              position="absolute"
+              top={0}
+              left="120px"
+              right={0}
+              bottom={0}
+              pointerEvents="none"
+              zIndex={10} // Ensure it's above grid lines
+            >
+              <Grid
+                templateColumns={`repeat(${DEPARTMENTS.length}, minmax(240px, 1fr))`}
+                h="full"
+              >
+                {DEPARTMENTS.map((dept) => (
+                  <Box
+                    key={dept}
+                    position="relative"
+                    h="full"
+                    borderRight="1px solid"
+                    borderColor="transparent"
+                  >
+                    {renderSchedules(dept)}
+                  </Box>
+                ))}
+              </Grid>
+            </Box>
           </Box>
         </Box>
-      </Box>
-    </HStack>
+      </HStack>
+      <DragOverlay dropAnimation={null} style={{ pointerEvents: "none" }}>
+        {activeUser ? (
+          <Box w="300px">
+            <UserCard user={activeUser} />
+          </Box>
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 };
 

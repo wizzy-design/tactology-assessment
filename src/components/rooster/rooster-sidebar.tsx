@@ -7,15 +7,13 @@ import {
   Text,
   Icon,
   Input,
-  Avatar,
-  Badge,
-  Flex,
   Separator,
 } from "@chakra-ui/react";
-import { SearchNormal1, Filter, Maximize4 } from "iconsax-reactjs";
+import { Filter, Maximize4 } from "iconsax-reactjs";
 import { useState } from "react";
 import { MOCK_USERS } from "@/lib/mock-data";
 import { CiSearch } from "react-icons/ci";
+import DraggableUserCard from "./draggable-user-card";
 
 const RoosterSidebar = () => {
   const [activeTab, setActiveTab] = useState("On Leave");
@@ -25,20 +23,6 @@ const RoosterSidebar = () => {
     { label: "Available", count: 30 },
     { label: "On Leave", count: 4 },
   ];
-
-  const getIndicatorColor = (ind: string) => {
-    switch (ind) {
-      case "m":
-      case "di":
-      case "w":
-        return { bg: "#F1FBF4", color: "#37A55C" };
-      case "do":
-      case "vr":
-        return { bg: "#FDF5F0", color: "#E35F00" };
-      default:
-        return { bg: "#FFEFE7", color: "#F55300" };
-    }
-  };
 
   return (
     <Box
@@ -175,120 +159,11 @@ const RoosterSidebar = () => {
       >
         {/* Repeating mock users to fill space as in screenshot */}
         {[...MOCK_USERS, ...MOCK_USERS].map((user, idx) => (
-          <Box
+          <DraggableUserCard
             key={`${user.id}-${idx}`}
-            p="10px"
-            borderRadius="12px"
-            border="1px solid"
-            borderColor="app.neutralOutline"
-            bg="white"
-          >
-            <HStack align="start" gap="10px">
-              <Avatar.Root bg="#F3F5F7" width="40px" height="40px">
-                <Avatar.Fallback fontSize="xs" fontWeight="600" color="#4E5D69">
-                  {user.initials}
-                </Avatar.Fallback>
-              </Avatar.Root>
-
-              <VStack align="stretch" gap="1" flex="1">
-                <HStack justify="space-between" align="start">
-                  <Text
-                    fontSize="14px"
-                    fontWeight="600"
-                    color="app.customBlack"
-                  >
-                    {user.name}
-                  </Text>
-
-                  <Badge
-                    bg="#FEECEC"
-                    color="#EF2E2E"
-                    fontSize="10px"
-                    fontWeight="500"
-                    borderRadius="full"
-                    px="8px"
-                    h="18px"
-                    textTransform="none"
-                  >
-                    • On leave
-                  </Badge>
-                </HStack>
-
-                <HStack gap="4px" mt="6px">
-                  <HStack
-                    gap="4px"
-                    bg="app.neutralLight"
-                    px="8px"
-                    py="4px"
-                    borderRadius="6px"
-                  >
-                    <Text
-                      fontSize="10px"
-                      fontWeight="500"
-                      color="app.neutralGrey"
-                    >
-                      {user.totalHours}
-                    </Text>
-                  </HStack>
-                  <HStack
-                    gap="4px"
-                    bg="app.neutralLight"
-                    px="8px"
-                    py="4px"
-                    borderRadius="6px"
-                  >
-                    <Text
-                      fontSize="10px"
-                      fontWeight="500"
-                      color="app.neutralGrey"
-                    >
-                      {user.weeklyHours}
-                    </Text>
-                  </HStack>
-                </HStack>
-
-                <HStack justify="space-between" align="center" mt="8px">
-                  <Badge
-                    bg="#FEECEC"
-                    color="#EF2E2E"
-                    fontSize="10px"
-                    fontWeight="500"
-                    borderRadius="4px"
-                    px="6px"
-                    py="4px"
-                    textTransform="none"
-                  >
-                    {user.leaveRange}
-                  </Badge>
-
-                  <HStack gap="4px">
-                    {user.indicators.map((ind) => {
-                      const colors = getIndicatorColor(ind);
-                      return (
-                        <Box
-                          key={ind}
-                          boxSize="18px"
-                          bg={colors.bg}
-                          borderRadius="full"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <Text
-                            fontSize="9px"
-                            fontWeight="500"
-                            color={colors.color}
-                          >
-                            {ind}
-                          </Text>
-                        </Box>
-                      );
-                    })}
-                  </HStack>
-                </HStack>
-              </VStack>
-            </HStack>
-          </Box>
+            id={`sidebar-user-${user.id}-${idx}`}
+            user={user}
+          />
         ))}
       </VStack>
     </Box>
